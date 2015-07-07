@@ -1,6 +1,6 @@
-**CentOS 7 Base Minimal Install - 137 MB - Updated 7/7/2015**
+**CentOS 7 Base Minimal Install - 152 MB - Updated 7/7/2015**
 
-# CentOS 7 Base Minimal Install - 137 MB - Updated 7/7/2015
+# CentOS 7 Base Minimal Install - 152 MB - Updated 7/7/2015
 
 ***This container is built from centos:7, (247 MB Before Flatification)***
 
