@@ -9,15 +9,15 @@
 
 ##Install required packages##
 
-   `rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7`
+    `rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7`
 
 ##Install the Epel, Remi, and Postgres 9.4 Repositories.##
 
-   cd /etc/yum.repos.d/;
-   wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm;
-   wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm;
-   rpm -Uvh remi-release-7*.rpm epel-release-7*.rpm
-   rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
+    cd /etc/yum.repos.d/;
+    wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm;
+    wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm;
+    rpm -Uvh remi-release-7*.rpm epel-release-7*.rpm
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
 
 ##Modify Remi Repo to enable remi base and PHP 5.5##
 

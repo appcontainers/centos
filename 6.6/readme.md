@@ -13,11 +13,11 @@
 
 ##Install the Epel, Remi, and Postgres 9.4 Repositories.##
 
-   cd /etc/yum.repos.d/;
-   wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm;
-   wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm;
-   rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
-   rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
+    cd /etc/yum.repos.d/;
+    wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm;
+    wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm;
+    rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
 
 ##Modify Remi Repo to enable remi base and PHP 5.5##
 
