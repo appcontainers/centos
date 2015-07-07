@@ -28,7 +28,7 @@ ENV TERMTAG CENTOS6
 #####################################################################################################################
 
 # Import keys and fix passwd issue.
-RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6 && \
 
 # Download and install Epel, and Remi repositories.
 cd /etc/yum.repos.d/ && \
@@ -83,7 +83,11 @@ rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/* && \
 rm -fr /usr/share/hwdata/* && \
 
 # This can be undone by reinstalling shared-mime-info
-rm -fr /usr/share/mime/application/* /usr/share/mime/packages/*
+rm -fr /usr/share/mime/application/* /usr/share/mime/packages/* && \
+
+# Remove Non America TimeZone Data
+# This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
+for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;
 
 # Rebuild the RPM Database
 RUN rm -f /var/lib/rpm/__db* && \
