@@ -1,8 +1,8 @@
-**CentOS 6.6 Base Minimal Install - 137 MB - Updated 7/7/2015**
+**CentOS 6.7 Base Minimal Install - 137 MB - Updated 7/7/2015**
 
-# CentOS 6.6 Base Minimal Install - 137 MB - Updated 7/7/2015
+# CentOS 6.7 Base Minimal Install - 137 MB - Updated 7/7/2015
 
-***This container is built from centos:6.6, (401 MB Before Flatification)***
+***This container is built from centos:6.7, (401 MB Before Flatification)***
 
 
 ># Installation Steps:
@@ -138,6 +138,8 @@ Issuing a `docker images` should now show a newly saved appcontainers/centos ima
    `docker run -it -d appcontainers/centos`
 
 ># Dockerfile Changelog
+
+    08/07/2015 - Upgrade to CentOS 6.7
 
     07/07/2015 - Squueze more space.. reduced from 270MB to 137MB
     
