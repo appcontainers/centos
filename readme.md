@@ -1,22 +1,22 @@
-**CentOS 7 Base Minimal Install - 152 MB - Updated 7/7/2015**
+**CentOS 6.7 Base Minimal Install - 137 MB - Updated 7/7/2015**
 
-# CentOS 7 Base Minimal Install - 152 MB - Updated 7/7/2015
+# CentOS 6.7 Base Minimal Install - 137 MB - Updated 7/7/2015
 
-***This container is built from centos:7, (247 MB Before Flatification)***
+***This container is built from centos:6.7, (401 MB Before Flatification)***
 
 
 ># Installation Steps:
 
 ##Install required packages##
 
-    `rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7`
+   `rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6`
 
 ##Install the Epel, Remi, and Postgres 9.4 Repositories.##
 
     cd /etc/yum.repos.d/;
-    wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm;
-    wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm;
-    rpm -Uvh remi-release-7*.rpm epel-release-7*.rpm
+    wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm;
+    wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm;
+    rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
     rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
 
 ##Modify Remi Repo to enable remi base and PHP 5.5##
@@ -25,9 +25,6 @@
     sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
 
 ##Update the OS##
-
-###NOTE: If building on any box other than a CentOS 7 docker host, then iputils.x86 will fail with: 
-unpacking of archive failed on file /usr/bin/ping: cpio: cap_set_file###
 
    `yum -y update`
 
@@ -107,7 +104,6 @@ unpacking of archive failed on file /usr/bin/ping: cpio: cap_set_file###
     
    `docker build -t build/centos .`
 
-
 ># Packaging the final image
 
 Because we want to make this image as light weight as possible in terms of size, the image is flattened in order to remove the docker build tree, removing any intermediary build containers from the image. In order to remove the reversion history, the image needs to be ran, and then exported/imported. Note that just saving the image will not remove the revision history, In order to remove the revision history, the running container must be exported and then re-imported. 
@@ -143,4 +139,12 @@ Issuing a `docker images` should now show a newly saved appcontainers/centos ima
 
 ># Dockerfile Changelog
 
-    07/07/2015 - First Build
+    08/07/2015 - Upgrade to CentOS 6.7
+
+    07/07/2015 - Squueze more space.. reduced from 270MB to 137MB
+    
+    05/06/2015 - Updated configuration scripts, pre import GPG repo keys
+    
+    04/27/15 - Removed Locales other than English to conserve over 100MB
+    
+    04/06/15 - Changed Postgres Repo from postgresql9.3 postgresql-9.4
