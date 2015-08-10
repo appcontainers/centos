@@ -1,10 +1,10 @@
 **CentOS 6.7 Base Minimal Install - 137 MB - Updated 8/7/2015**
--->  quay.eros.systems/centos:6
+-->  appcontainers/centos:6
 
 **CentOS 7 Base Minimal Install - 152 MB - Updated 7/7/2015**
--->  quay.eros.systems/centos:7
+-->  appcontainers/centos:7
 
-# CentOS 6.6 Base Minimal Install - 137 MB - Updated 7/7/2015 (tag:latest)
+# CentOS 6.7 Base Minimal Install - 137 MB - Updated 7/7/2015 (tag:latest)
 
 ***This container is built from centos:6.7, (401 MB Before Flatification)***
 
