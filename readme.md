@@ -1,6 +1,10 @@
-**CentOS 6.7 Base Minimal Install - 137 MB - Updated 7/7/2015**
+**CentOS 6.7 Base Minimal Install - 137 MB - Updated 8/7/2015**
+-->  quay.eros.systems/centos:6
 
-# CentOS 6.7 Base Minimal Install - 137 MB - Updated 7/7/2015
+**CentOS 7 Base Minimal Install - 152 MB - Updated 7/7/2015**
+-->  quay.eros.systems/centos:7
+
+# CentOS 6.6 Base Minimal Install - 137 MB - Updated 7/7/2015 (tag:latest)
 
 ***This container is built from centos:6.7, (401 MB Before Flatification)***
 
@@ -43,16 +47,27 @@
     mv -f locale-archive locale-archive.tmpl
     build-locale-archive
 
+##Set the default Timezone to EST##
+    
+    cp /etc/localtime /root/old.timezone && \
+    rm -f /etc/localtime && \
+    ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
+
 ##Remove Man Pages and Docs to preserve Space##
 
     rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/*
     rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
 
-    # This can be undone by reinstalling the hwdata package from yum..
+##Remove a few other misc items##
+
+    # This can be undone by reinstalling the hwdata package via yum..
     rm -fr /usr/share/hwdata/* && \
 
-    # This can be undone by reinstalling shared-mime-info
+    # This can be undone by reinstalling shared-mime-info via yum
     rm -fr /usr/share/mime/application/* /usr/share/mime/packages/*
+
+    # This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
+    for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;
 
 ##Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images##
 
@@ -98,7 +113,8 @@
 
 ##Set Dockerfile Runtime command (default command to run when lauched via docker run)##
     
-    CMD /bin/bash
+    CMD /bin/bash    
+
 
 ># Building the image from the Dockerfile:
     
@@ -124,7 +140,7 @@ Because we want to make this image as light weight as possible in terms of size,
    `CTL P` + `CTL Q`
 
 
-###### Export and Reimport the Container note that because we started the build container with the name of ubnutubuild, we will use that in the export statement instead of the container ID.
+###### Export and Reimport the Container note that because we started the build container with the name of centosbuild, we will use that in the export statement instead of the container ID.
 
     
     docker export centosbuild | docker import - appcontainers/centos:latest
