@@ -61,10 +61,10 @@
 ##Remove a few other misc items##
 
     # This can be undone by reinstalling the hwdata package via yum..
-    rm -fr /usr/share/hwdata/* && \
+    # rm -fr /usr/share/hwdata/* && \
 
     # This can be undone by reinstalling shared-mime-info via yum
-    rm -fr /usr/share/mime/application/* /usr/share/mime/packages/*
+    # rm -fr /usr/share/mime/application/* /usr/share/mime/packages/*
 
     # This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
     for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;
@@ -110,6 +110,10 @@
     
     PROMPT_COMMAND='set_prompt'
     fi
+
+##Add the following to prevent any additions to the .bashrc from being executed via SSH or SCP sessions
+    echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /root/.bashrc && \
+    echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /etc/skel/.bashrc
 
 ##Set Dockerfile Runtime command (default command to run when lauched via docker run)##
     

@@ -84,11 +84,12 @@ ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
 RUN rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/* && \
 rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/* && \
 
+# --> 9/29/2015 Commenting out to see if it fixes the tail issue.
 # This can be undone by reinstalling the hwdata package from yum..
-rm -fr /usr/share/hwdata/* && \
+# rm -fr /usr/share/hwdata/* && \
 
 # This can be undone by reinstalling shared-mime-info
-rm -fr /usr/share/mime/application/* /usr/share/mime/packages/* && \
+# rm -fr /usr/share/mime/application/* /usr/share/mime/packages/* && \
 
 # Remove Non America TimeZone Data
 # This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
@@ -104,6 +105,10 @@ rpm --rebuilddb
 
 ADD termcolor.sh /etc/profile.d/PS1.sh
 RUN chmod +x /etc/profile.d/PS1.sh
+
+# Add the following to prevent any additions to the .bashrc from being executed via SSH or SCP sessions
+RUN echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /root/.bashrc && \
+echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /etc/skel/.bashrc
 
 CMD /bin/bash
 
