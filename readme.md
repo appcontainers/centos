@@ -159,6 +159,8 @@ Issuing a `docker images` should now show a newly saved appcontainers/centos ima
 
 ># Dockerfile Changelog
 
+    09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
+
     08/07/2015 - Upgrade to CentOS 6.7
 
     07/07/2015 - Squueze more space.. reduced from 270MB to 137MB

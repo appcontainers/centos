@@ -88,10 +88,10 @@ RUN rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/
 rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/* && \
 
 # This can be undone by reinstalling the hwdata package from yum..
-rm -fr /usr/share/hwdata/* && \
+# rm -fr /usr/share/hwdata/* && \
 
 # This can be undone by reinstalling shared-mime-info
-rm -fr /usr/share/mime/application/* /usr/share/mime/packages/* && \
+# rm -fr /usr/share/mime/application/* /usr/share/mime/packages/* && \
 
 # Remove Non America TimeZone Data
 # This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
@@ -100,6 +100,10 @@ for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo
 # Rebuild the RPM Database
 RUN rm -f /var/lib/rpm/__db* && \
 rpm --rebuilddb
+
+# Add the following to prevent any additions to the .bashrc from being executed via SSH or SCP sessions
+RUN echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /root/.bashrc && \
+echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /etc/skel/.bashrc
 
 ###################################################################
 #*****************  CONFIGURE START ITEMS  ************************
