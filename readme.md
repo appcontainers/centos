@@ -1,12 +1,12 @@
-**CentOS 6.7 Base Minimal Install - 137 MB - Updated 8/7/2015**
+**CentOS 6.7 Base Minimal Install - 144 MB - Updated 9/29/2015**
 -->  appcontainers/centos:6
 
 **CentOS 7 Base Minimal Install - 152 MB - Updated 7/7/2015**
 -->  appcontainers/centos:7
 
-# CentOS 6.7 Base Minimal Install - 137 MB - Updated 7/7/2015 (tag:latest)
+# CentOS 6.7 Base Minimal Install - 144 MB - Updated 9/29/2015 (tag:latest,6.7)
 
-***This container is built from centos:6.7, (401 MB Before Flatification)***
+***This container is built from centos:6.7, (463 MB Before Flatification)***
 
 
 ># Installation Steps:
