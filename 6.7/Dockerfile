@@ -1,13 +1,13 @@
 ############################################################
-# Dockerfile to build the CentOS 6.6 Base Container
-# Based on: library/centos:6.6
+# Dockerfile to build the CentOS 6.7 Base Container
+# Based on: library/centos:6.7
 # DATE: 07/06/15
 # COPYRIGHT: Appcontainers.com
 ############################################################
 
 # Set the base image in namespace/repo format. 
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/centos:6.6
+FROM library/centos:6.7
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
@@ -28,19 +28,7 @@ ENV TERMTAG CENTOS6
 ###################################################################
 
 # Import keys and fix passwd issue.
-RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6 && \
-
-# Download and install Epel, and Remi repositories.
-cd /etc/yum.repos.d/ && \
-curl -O http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && \
-curl -O http://rpms.famillecollet.com/enterprise/remi-release-6.rpm && \
-rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm && \
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi && \
-rm -fr *.rpm
-
-#Enable the remi repo
-RUN sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
-sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
+RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 
 ###################################################################
 #*******************  UPDATES & PRE-REQS  *************************
@@ -48,10 +36,24 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 
 # Clean, Update, and Install... then clear non English local data.
 RUN yum clean all && \
-yum -y update && \
 
 # Install required packages
-# yum -y install <PKGLIST> && \
+yum -y install epel-release && \
+
+# Download and install the Remi repository.
+cd /etc/yum.repos.d/ && \
+curl -O http://rpms.famillecollet.com/enterprise/remi-release-6.rpm && \
+rpm -Uvh remi-release-6*.rpm && \
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi && \
+rm -fr *.rpm && \
+
+#Enable the remi repo
+sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
+sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
+
+# Now that epel is installed, clean all again and update
+yum clean all && \
+yum -y update && \
 
 # Remove yum cache this bad boy can be 150MBish
 yum clean all && \
@@ -82,18 +84,7 @@ ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Remove documentation to cut down the image size
 RUN rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/* && \
-rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/* && \
-
-# --> 9/29/2015 Commenting out to see if it fixes the tail issue.
-# This can be undone by reinstalling the hwdata package from yum..
-# rm -fr /usr/share/hwdata/* && \
-
-# This can be undone by reinstalling shared-mime-info
-# rm -fr /usr/share/mime/application/* /usr/share/mime/packages/* && \
-
-# Remove Non America TimeZone Data
-# This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
-for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;
+rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
 
 # Rebuild the RPM Database
 RUN rm -f /var/lib/rpm/__db* && \
@@ -126,3 +117,14 @@ CMD /bin/bash
 
 # Automatically Disable SELinux
 # RUN sed -ie 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+
+# --> 9/29/2015 Commenting out to see if it fixes the tail issue.
+# This can be undone by reinstalling the hwdata package from yum..
+# rm -fr /usr/share/hwdata/* && \
+
+# This can be undone by reinstalling shared-mime-info
+# rm -fr /usr/share/mime/application/* /usr/share/mime/packages/* && \
+
+# Remove Non America TimeZone Data
+# This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
+# for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;

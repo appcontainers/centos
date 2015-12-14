@@ -28,19 +28,7 @@ ENV TERMTAG CENTOS7
 ###################################################################
 
 # Import keys and fix passwd issue.
-RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
-
-# Download and install Epel, and Remi repositories.
-cd /etc/yum.repos.d/ && \
-curl -O http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm && \
-curl -O http://rpms.famillecollet.com/enterprise/remi-release-7.rpm && \
-rpm -Uvh remi-release-7*.rpm epel-release-7*.rpm && \
-rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi && \
-rm -fr *.rpm
-
-#Enable the remi repo
-RUN sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
-sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
+RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
 ###################################################################
 #*******************  UPDATES & PRE-REQS  *************************
@@ -50,10 +38,25 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 # NOTE: If building on any box other than a CentOS 7 docker host, then iputils.x86 will fail with:
 # unpacking of archive failed on file /usr/bin/ping: cpio: cap_set_file
 RUN yum clean all && \
-yum -y update && \
 
 # Install required packages
-# yum -y install <PKGLIST> && \
+yum -y install epel-release && \
+
+# Download and install Epel, and Remi repositories.
+cd /etc/yum.repos.d/ && \
+curl -O http://rpms.famillecollet.com/enterprise/remi-release-7.rpm && \
+rpm -Uvh remi-release-7*.rpm && \
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi && \
+rm -fr *.rpm && \
+
+#Enable the remi repo
+sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
+sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
+
+# Update the OS,
+# Exclude systemd, and its dependant libs as centos installs a fake systemd for the container.
+yum clean all && \
+yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount*,iputils* -y update && \
 
 # Remove yum cache this bad boy can be 150MBish
 yum clean all && \
@@ -85,17 +88,7 @@ ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Remove random un-necessary crap
 RUN rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/* && \
-rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/* && \
-
-# This can be undone by reinstalling the hwdata package from yum..
-# rm -fr /usr/share/hwdata/* && \
-
-# This can be undone by reinstalling shared-mime-info
-# rm -fr /usr/share/mime/application/* /usr/share/mime/packages/* && \
-
-# Remove Non America TimeZone Data
-# This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
-for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;
+rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
 
 # Rebuild the RPM Database
 RUN rm -f /var/lib/rpm/__db* && \
@@ -128,3 +121,13 @@ CMD /bin/bash
 
 # Automatically Disable SELinux
 # RUN sed -ie 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+
+# This can be undone by reinstalling the hwdata package from yum..
+# rm -fr /usr/share/hwdata/* && \
+
+# This can be undone by reinstalling shared-mime-info
+# rm -fr /usr/share/mime/application/* /usr/share/mime/packages/* && \
+
+# Remove Non America TimeZone Data
+# This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
+# for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;

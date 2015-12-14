@@ -1,4 +1,6 @@
-# CentOS 6.7 Base Minimal Install - 144 MB - Updated 9/29/2015 (tag:latest,6.7)
+**CentOS 6.7 Base Minimal Install - 136 MB - Updated 12/14/2015 (tag: latest, 6)**
+
+# CentOS 6.7 Base Minimal Install - 136 MB - Updated 12/14/2015 (tag: latest, 6)
 
 ***This container is built from centos:6.7, (463 MB Before Flatification)***
 
@@ -9,12 +11,14 @@
 
    `rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6`
 
-##Install the Epel, Remi, and Postgres 9.4 Repositories.##
+##Install epel##
+   `yum install -y epel-release`
+
+##Install the Remi Repository.##
 
     cd /etc/yum.repos.d/;
-    wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm;
     wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm;
-    rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
+    rpm -Uvh remi-release-6*.rpm
     rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
 
 ##Modify Remi Repo to enable remi base and PHP 5.5##
@@ -22,8 +26,8 @@
     sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
     sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
 
-##Update the OS##
-
+## Update the OS
+   `yum clean all`
    `yum -y update`
 
 ##Cleanup (removing the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image##
@@ -51,17 +55,6 @@
 
     rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/*
     rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
-
-##Remove a few other misc items##
-
-    # This can be undone by reinstalling the hwdata package via yum..
-    # rm -fr /usr/share/hwdata/* && \
-
-    # This can be undone by reinstalling shared-mime-info via yum
-    # rm -fr /usr/share/mime/application/* /usr/share/mime/packages/*
-
-    # This can be undone via: wget 'ftp://elsie.nci.nih.gov/pub/tzdata*.tar.gz'
-    for x in `ls /usr/share/zoneinfo|grep -v America`; do rm -fr /usr/share/zoneinfo/$x;done;
 
 ##Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images##
 
@@ -152,6 +145,8 @@ Issuing a `docker images` should now show a newly saved appcontainers/centos ima
    `docker run -it -d appcontainers/centos`
 
 ># Dockerfile Changelog
+
+    12/14/2015 - Update to 6.7 official, epel change.
 
     09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
 

@@ -1,8 +1,8 @@
-**CentOS 7 Base Minimal Install - 152 MB - Updated 7/7/2015**
+**CentOS 7.2 Base Minimal Install - 159 MB - Updated 12/14/2015 (tag: 7)**
 
-# CentOS 7 Base Minimal Install - 152 MB - Updated 7/7/2015
+# CentOS 7.2 Base Minimal Install - 159 MB - Updated 12/14/2015 (tag: 7)
 
-***This container is built from centos:7, (247 MB Before Flatification)***
+***This container is built from centos:7, (436 MB Before Flatification)***
 
 
 ># Installation Steps:
@@ -11,25 +11,24 @@
 
     `rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7`
 
-##Install the Epel, Remi, and Postgres 9.4 Repositories.##
+##Install Epel, Remi, Clean and then update the OS##
+
+    yum install -y epel-release; 
 
     cd /etc/yum.repos.d/;
-    wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm;
     wget http://rpms.famillecollet.com/enterprise/remi-release-7.rpm;
-    rpm -Uvh remi-release-7*.rpm epel-release-7*.rpm
+    rpm -Uvh remi-release-7*.rpm;
     rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
 
 ##Modify Remi Repo to enable remi base and PHP 5.5##
 
-    sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
+    sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo;
     sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
 
-##Update the OS##
+### The update will exclude systemd, and its dependant libs, as to not replace fake systemd.
 
-###NOTE: If building on any box other than a CentOS 7 docker host, then iputils.x86 will fail with: 
-unpacking of archive failed on file /usr/bin/ping: cpio: cap_set_file###
-
-   `yum -y update`
+   `yum clean all`
+   `yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount*,iputils* -y update`
 
 ##Cleanup (removing the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image##
 
@@ -50,12 +49,6 @@ unpacking of archive failed on file /usr/bin/ping: cpio: cap_set_file###
 
     rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/*
     rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
-
-    # This can be undone by reinstalling the hwdata package from yum..
-    rm -fr /usr/share/hwdata/* && \
-
-    # This can be undone by reinstalling shared-mime-info
-    rm -fr /usr/share/mime/application/* /usr/share/mime/packages/*
 
 ##Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images##
 
@@ -142,5 +135,7 @@ Issuing a `docker images` should now show a newly saved appcontainers/centos ima
    `docker run -it -d appcontainers/centos`
 
 ># Dockerfile Changelog
+
+    12/14/2015 - Updated to CentOS 7.2
 
     07/07/2015 - First Build
