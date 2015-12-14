@@ -56,7 +56,7 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 # Update the OS,
 # Exclude systemd, and its dependant libs as centos installs a fake systemd for the container.
 yum clean all && \
-yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount*,iputils* -y update && \
+yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount* -y update && \
 
 # Remove yum cache this bad boy can be 150MBish
 yum clean all && \
