@@ -2,7 +2,7 @@
 
 ***This container is built from centos:6.7, (463 MB Before Flatification)***
 
->## Installation Steps:
+># Installation Steps:
 
 ### Install official CentOS 6 GPG Key
 
@@ -11,6 +11,7 @@ rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 ```
 
 ### Install the Epel Repository 
+
 ```bash
 yum install -y epel-release
 ```
