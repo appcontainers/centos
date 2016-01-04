@@ -132,20 +132,20 @@ CMD /bin/bash
 ```
 &nbsp;
 
->## Building the image from the Dockerfile:
+># Building the image from the Dockerfile:
 
 ```bash
 docker build -t build/centos .
 ```
 &nbsp;
 
->## Packaging the final image
+># Packaging the final image
 
 Because we want to make this image as light weight as possible in terms of size, the image is flattened in order to remove the docker build tree, removing any intermediary build containers from the image. In order to remove the reversion history, the image needs to be ran, and then exported/imported. Note that just saving the image will not remove the revision history, In order to remove the revision history, the running container must be exported and then re-imported.
 
 &nbsp;
 
->## Flatten the Image
+># Flatten the Image
 
 ***Run the build container***
 
@@ -179,7 +179,7 @@ docker run -it -d appcontainers/centos
 
 &nbsp;
 
->## Dockerfile Changelog:
+># Dockerfile Change-log:
 
     12/14/2015 - Update to 6.7 official, epel change.
     09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
