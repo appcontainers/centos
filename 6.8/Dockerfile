@@ -1,13 +1,13 @@
 ############################################################
-# Dockerfile to build the CentOS 6.7 Base Container
-# Based on: library/centos:6.7
-# DATE: 07/06/15
+# Dockerfile to build the CentOS 6.8 Base Container
+# Based on: library/centos:6.8
+# DATE: 06/11/16
 # COPYRIGHT: Appcontainers.com
 ############################################################
 
 # Set the base image in namespace/repo format. 
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/centos:6.7
+FROM library/centos:6.8
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com

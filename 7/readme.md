@@ -1,15 +1,15 @@
-## CentOS 7.2 Base Minimal Install - 159 MB - Updated 12/14/2015 (tag: 7)  
-***This container is built from centos:7, (436 MB Before Flatification)***
+## CentOS 7.2 Base Minimal Install - 182 MB - Updated 06/11/2016 (tag: 7)  
+***This container is built from centos:7, (397 MB Before Flatification)***
 
 ># Installation Steps:
 
-### Install official CentOS 6 GPG Key
+### Install official CentOS 7 GPG Key
 
 ```bash
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 ```
 
-### Install the Epel Repository 
+### Install the Epel Repository
 ```bash
 yum install -y epel-release
 ```
@@ -36,7 +36,7 @@ yum clean all;
 yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount*,iputils* -y update
 ```
 
-### Cleanup 
+### Cleanup
 ***Remove the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image size***
 
 ```bash
@@ -59,7 +59,7 @@ build-locale-archive
 ```
 
 ### Set the default Timezone to EST
-    
+
 ```bash
 cp /etc/localtime /root/old.timezone && \
 rm -f /etc/localtime && \
@@ -97,7 +97,7 @@ if [ "$PS1" ]; then
     else
         PS1="$Red$FancyX "
     fi
-    
+
     # If root, just print the host in red. Otherwise, print the current user
     # and host in green.
     if [[ $EUID == 0 ]]; then
@@ -105,7 +105,7 @@ if [ "$PS1" ]; then
     else
         PS1+="$Black $YellowBack $TERMTAG $Reset $Green \\u@\\h"
     fi
-    
+
     # Print the working directory and prompt marker in blue, and reset
     # the text color to the default.
     PS1+="$Blue\\w \\\$$Reset "
@@ -124,7 +124,7 @@ echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi
 
 ### Set Dockerfile Runtime command
 ***Default command to run when lauched via docker run***
-    
+
 ```bash
 CMD /bin/bash
 ```
@@ -153,7 +153,7 @@ docker run -it -d \
 build/centos \
 /bin/bash
 ```
- 
+
 ***The run statement should start a detached container, however if you are attached, detach from the container***  
 `CTL P` + `CTL Q`
 
@@ -170,7 +170,7 @@ docker export centos | docker import - appcontainers/centos:7
 Issuing a `docker images` should now show a newly saved appcontainers/centos image, which can be pushed to the docker hub.
 
 ***Run the container***
-    
+
 ```bash
 docker run -it -d appcontainers/centos:7
 ```
@@ -179,5 +179,6 @@ docker run -it -d appcontainers/centos:7
 
 ># Dockerfile Change-log:
 
+    06/11/2016 - Updated to latest 7.2.1511 build.
     12/14/2015 - Updated to CentOS 7.2
     07/07/2015 - First Build

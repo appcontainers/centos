@@ -1,13 +1,13 @@
 ############################################################
 # Dockerfile to build the CentOS 7 Base Container
-# Based on: centos:7
-# DATE: 07/07/15
+# Based on: centos:7.2.1511
+# DATE: 06/11/16
 # COPYRIGHT: Appcontainers.com
 ############################################################
 
-# Set the base image in namespace/repo format. 
+# Set the base image in namespace/repo format.
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/centos:7
+FROM library/centos:7.2.1511
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
