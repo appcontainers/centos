@@ -1,4 +1,5 @@
-## CentOS 7.2 Base Minimal Install - 284 MB - Updated 11/28/2016 (tag: 7)  
+## CentOS 7.2 Base Minimal Install - 284 MB - Updated 11/28/2016 (tag: 7)
+
 ***This container is built from centos:7, (343 MB Before Flatification)***
 
 ># Installation Steps:
@@ -10,6 +11,7 @@ rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 ```
 
 ### Install the Epel Repository
+
 ```bash
 yum install -y epel-release
 ```
@@ -31,14 +33,26 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 ```
 
 ### Update the OS
+
 ```bash
 yum clean all;
 yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount*,iputils* -y update
 yum -y install vim ansible
-yum clean all
+```
+
+### Install and Configure Ansible
+
+```bash
+curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py" && \
+python /tmp/get-pip.py && \
+pip install pip --upgrade && \
+rm -fr /tmp/get-pip.py && \
+mkdir -p /etc/ansible/roles || exit 0 && \
+echo localhost ansible_connection=local > /etc/ansible/hosts
 ```
 
 ### CentOS recommended systemd fixes
+
 ```bash
 (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done) && \
 rm -f /lib/systemd/system/multi-user.target.wants/* && \
@@ -51,6 +65,7 @@ rm -f /lib/systemd/system/anaconda.target.wants/*
 ```
 
 ### Cleanup
+
 ***Remove the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image size***
 
 ```bash
@@ -88,6 +103,7 @@ rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
 ```
 
 ### Set the Terminal CLI Prompt
+
 ***Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images***
 
 ```bash
@@ -137,6 +153,7 @@ echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi
 ```
 
 ### Set Dockerfile Runtime command
+
 ***Default command to run when lauched via docker run***
 
 ```bash
@@ -168,11 +185,13 @@ build/centos \
 /bin/bash
 ```
 
-***The run statement should start a detached container, however if you are attached, detach from the container***  
+***The run statement should start a detached container, however if you are attached, detach from the container***
+
 `CTL P` + `CTL Q`
 
 
 ***Export and Re-import the Container***
+
 __Note that because we started the build container with the name of centos, we will use that in the export statement instead of the container ID.__
 
 ```bash

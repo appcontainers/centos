@@ -40,11 +40,10 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 yum clean all;
 yum -y update;
 yum -y install vim ansible;
-yum clean all;
-yum -fr /var/cache/*
 ```
 
 ### Install and Configure Ansible
+
 ```bash
 curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py" && \
 python /tmp/get-pip.py && \
@@ -94,6 +93,7 @@ rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
 ```
 
 ### Set the Terminal CLI Prompt
+
 ***Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images***
 
 ```bash
@@ -140,6 +140,7 @@ echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi
 ```
 
 ### Set Dockerfile Runtime command
+
 ***Default command to run when lauched via docker run***
 
 ```bash
@@ -171,11 +172,13 @@ build/centos \
 /bin/bash
 ```
 
-***The run statement should start a detached container, however if you are attached, detach from the container***  
+***The run statement should start a detached container, however if you are attached, detach from the container*** 
+
 `CTL P` + `CTL Q`
 
 
 ***Export and Re-import the Container***
+
 __Note that because we started the build container with the name of centos, we will use that in the export statement instead of the container ID.__
 
 ```bash
