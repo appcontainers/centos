@@ -1,5 +1,5 @@
-## CentOS 7.2 Base Minimal Install - 182 MB - Updated 06/11/2016 (tag: 7)  
-***This container is built from centos:7, (397 MB Before Flatification)***
+## CentOS 7.2 Base Minimal Install - 284 MB - Updated 11/28/2016 (tag: 7)  
+***This container is built from centos:7, (343 MB Before Flatification)***
 
 ># Installation Steps:
 
@@ -34,6 +34,20 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 ```bash
 yum clean all;
 yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount*,iputils* -y update
+yum -y install vim ansible
+yum clean all
+```
+
+### CentOS recommended systemd fixes
+```bash
+(cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done) && \
+rm -f /lib/systemd/system/multi-user.target.wants/* && \
+rm -f /etc/systemd/system/*.wants/* && \
+rm -f /lib/systemd/system/local-fs.target.wants/* && \
+rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl* && \
+rm -f /lib/systemd/system/basic.target.wants/* && \
+rm -f /lib/systemd/system/anaconda.target.wants/*
 ```
 
 ### Cleanup
@@ -126,7 +140,7 @@ echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi
 ***Default command to run when lauched via docker run***
 
 ```bash
-CMD /bin/bash
+CMD /usr/sbin/init && /bin/bash
 ```
 &nbsp;
 
@@ -169,16 +183,17 @@ docker export centos | docker import - appcontainers/centos:7
 
 Issuing a `docker images` should now show a newly saved appcontainers/centos image, which can be pushed to the docker hub.
 
-***Run the container***
+***Run the container (On CentOS7 Host)***
 
 ```bash
-docker run -it -d appcontainers/centos:7
+docker run -it -d -v /sys/fs/cgroup:/sys/fs/cgroup:ro appcontainers/centos:7
 ```
 
 &nbsp;
 
 ># Dockerfile Change-log:
 
+    11/28/2016 - Updated and ansible added to replace custom runconfig
     06/11/2016 - Updated to latest 7.2.1511 build.
     12/14/2015 - Updated to CentOS 7.2
     07/07/2015 - First Build

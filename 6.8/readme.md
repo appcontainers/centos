@@ -1,6 +1,6 @@
-## CentOS 6.8 Base Minimal Install - 134 MB - Updated 06/11/2016 (tags: latest, 6)
+## CentOS 6.8 Base Minimal Install - 238 MB - Updated 11/28/2016 (tags: latest, 6)
 
-***This container is built from centos:6.8, (251 MB Before Flatification)***
+***This container is built from centos:6.8, (397 MB Before Flatification)***
 
 ># Installation Steps:
 
@@ -14,15 +14,17 @@ rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 
 ```bash
 yum install -y epel-release
+rpm --import http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
 ```
 
 ### Install the Remi Repository
 
 ```bash
 cd /etc/yum.repos.d/;
-wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm;
+curl -O http://rpms.famillecollet.com/enterprise/remi-release-6.rpm;
 rpm -Uvh remi-release-6*.rpm;
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
+rm -fr *.rpm
 ```
 
 ### Modify Remi Repo to enable remi base and PHP 5.5
@@ -32,11 +34,24 @@ sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo;
 sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
 ```
 
-### Update the OS
+### Update the OS and install required packages
 
 ```bash
 yum clean all;
-yum -y update
+yum -y update;
+yum -y install vim ansible;
+yum clean all;
+yum -fr /var/cache/*
+```
+
+### Install and Configure Ansible
+```bash
+curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py" && \
+python /tmp/get-pip.py && \
+pip install pip --upgrade && \
+rm -fr /tmp/get-pip.py && \
+mkdir -p /etc/ansible/roles || exit 0 && \
+echo localhost ansible_connection=local > /etc/ansible/hosts
 ```
 
 ### Cleanup
@@ -44,6 +59,7 @@ yum -y update
 ***Remove the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image size***
 
 ```bash
+yum clean all
 rm -f /etc/yum.repos.d/*.rpm; rm -fr /var/cache/*
 ```
 
@@ -81,9 +97,10 @@ rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
 ***Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images***
 
 ```bash
+#!/bin/bash
 if [ "$PS1" ]; then
     set_prompt () {
-    Last_Command=$? # Must come first!
+    Last_Command=$?
     Blue='\[\e[01;34m\]'
     White='\[\e[01;37m\]'
     Red='\[\e[01;31m\]'
@@ -92,8 +109,8 @@ if [ "$PS1" ]; then
     Yellow='\[\e[01;33m\]'
     Black='\[\e[01;30m\]'
     Reset='\[\e[00m\]'
-    FancyX='\342\234\227'
-    Checkmark='\342\234\223'
+    FancyX=':('
+    Checkmark=':)'
 
     # If it was successful, print a green check mark. Otherwise, print a red X.
     if [[ $Last_Command == 0 ]]; then
@@ -101,20 +118,16 @@ if [ "$PS1" ]; then
     else
         PS1="$Red$FancyX "
     fi
-
-    # If root, just print the host in red. Otherwise, print the current user
-    # and host in green.
+    # If root, just print the host in red. Otherwise, print the current user and host in green.
     if [[ $EUID == 0 ]]; then
         PS1+="$Black $YellowBack $TERMTAG $Reset $Red \\u@\\h"
     else
         PS1+="$Black $YellowBack $TERMTAG $Reset $Green \\u@\\h"
     fi
-
-    # Print the working directory and prompt marker in blue, and reset
-    # the text color to the default.
+    # Print the working directory and prompt marker in blue, and reset the text color to the default.
     PS1+="$Blue\\w \\\$$Reset "
     }
-
+    
     PROMPT_COMMAND='set_prompt'
 fi
 ```
@@ -183,6 +196,7 @@ docker run -it -d appcontainers/centos
 
 ># Dockerfile Change-log:
 
+    11/28/2016 - Update to OS, add vim, and ansible as it will replace runconfig scripts
     06/11/2016 - Update to 6.8
     12/14/2015 - Update to 6.7 official, epel change.
     09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login

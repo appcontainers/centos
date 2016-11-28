@@ -1,38 +1,38 @@
-############################################################
+###########################################################
 # Dockerfile to build the CentOS 7 Base Container
 # Based on: centos:7.2.1511
 # DATE: 06/11/16
 # COPYRIGHT: Appcontainers.com
-############################################################
+###########################################################
 
 # Set the base image in namespace/repo format.
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/centos:7.2.1511
+FROM library/centos:7
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
 
-###################################################################
-#*************************  APP VERSIONS  *************************
-###################################################################
+###########################################################
+#*********************  APP VERSIONS  *********************
+###########################################################
 
 
-###################################################################
-#***************  OVERRIDE ENABLED ENV VARIABLES  *****************
-###################################################################
+###########################################################
+#***********  OVERRIDE ENABLED ENV VARIABLES  *************
+###########################################################
 
-ENV TERMTAG CENTOS7
+ENV TERMTAG CentOS7Base
 
-###################################################################
-#******************  ADD REQUIRED APP FILES  **********************
-###################################################################
+###########################################################
+#**************  ADD REQUIRED APP FILES  ******************
+###########################################################
 
 # Import keys and fix passwd issue.
 RUN rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
-###################################################################
-#*******************  UPDATES & PRE-REQS  *************************
-###################################################################
+###########################################################
+#***************  UPDATES & PRE-REQS  *********************
+###########################################################
 
 # Clean, Update, and Install... then clear non English local data.
 # NOTE: If building on any box other than a CentOS 7 docker host, then iputils.x86 will fail with:
@@ -41,6 +41,7 @@ RUN yum clean all && \
 
 # Install required packages
 yum -y install epel-release && \
+rpm --import http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 && \
 
 # Download and install Epel, and Remi repositories.
 cd /etc/yum.repos.d/ && \
@@ -57,10 +58,40 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 # Exclude systemd, and its dependant libs as centos installs a fake systemd for the container.
 yum clean all && \
 yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount* -y update && \
+yum -y install vim ansible && \
 
 # Remove yum cache this bad boy can be 150MBish
 yum clean all && \
 rm -fr /var/cache/*
+
+# The following actions are recommended by the official centos7 maintainers when constructing
+# a base container image.
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done) && \
+rm -f /lib/systemd/system/multi-user.target.wants/* && \
+rm -f /etc/systemd/system/*.wants/* && \
+rm -f /lib/systemd/system/local-fs.target.wants/* && \
+rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl* && \
+rm -f /lib/systemd/system/basic.target.wants/* && \
+rm -f /lib/systemd/system/anaconda.target.wants/*
+
+VOLUME [ "/sys/fs/cgroup" ]
+
+###################################################################
+#*******************  APPLICATION INSTALL  ************************
+###################################################################
+
+# Install pip and configure ansible
+RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py" && \
+python /tmp/get-pip.py && \
+pip install pip --upgrade && \
+rm -fr /tmp/get-pip.py && \
+mkdir -p /etc/ansible/roles || exit 0 && \
+echo localhost ansible_connection=local > /etc/ansible/hosts
+
+###################################################################
+#******************  POST DEPLOY CLEAN UP  ************************
+###################################################################
 
 # Remove locales other than english
 RUN for x in `ls /usr/share/locale | grep -v -i en | grep -v -i local`;do rm -fr /usr/share/locale/$x; done && \
@@ -70,16 +101,6 @@ cd /usr/lib/locale && \
 localedef --list-archive | grep -v -i ^en | xargs localedef --delete-from-archive && \
 mv -f locale-archive locale-archive.tmpl && \
 build-locale-archive
-
-
-###################################################################
-#*******************  APPLICATION INSTALL  ************************
-###################################################################
-
-
-###################################################################
-#******************  POST DEPLOY CLEAN UP  ************************
-###################################################################
 
 # Set the default Timezone to EST
 RUN cp /etc/localtime /root/old.timezone && \
@@ -105,7 +126,7 @@ echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi
 ADD termcolor.sh /etc/profile.d/PS1.sh
 RUN chmod +x /etc/profile.d/PS1.sh
 
-CMD /bin/bash
+CMD /usr/sbin/init && /bin/bash
 
 ###################################################################
 #****************  EXPOSE APPLICATION PORTS  **********************
