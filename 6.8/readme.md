@@ -1,4 +1,4 @@
-## CentOS 6.8 Base Minimal Install - 238 MB - Updated 11/28/2016 (tags: latest, 6)
+## CentOS 6.8 Base Minimal Install - 239 MB - Updated 03/24/2017 (tags: latest, 6)
 
 ***This container is built from centos:6.8, (397 MB Before Flatification)***
 

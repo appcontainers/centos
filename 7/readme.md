@@ -1,4 +1,4 @@
-## CentOS 7.2 Base Minimal Install - 284 MB - Updated 11/28/2016 (tag: 7)
+## CentOS 7.3 Base Minimal Install - 277 MB - Updated 03/24/2017 (tag: 7)
 
 ***This container is built from centos:7, (343 MB Before Flatification)***
 
@@ -212,6 +212,7 @@ docker run -it -d -v /sys/fs/cgroup:/sys/fs/cgroup:ro appcontainers/centos:7
 
 ># Dockerfile Change-log:
 
+    03/24/2017 - Updated to CentOS 7.3
     11/28/2016 - Updated and ansible added to replace custom runconfig
     06/11/2016 - Updated to latest 7.2.1511 build.
     12/14/2015 - Updated to CentOS 7.2

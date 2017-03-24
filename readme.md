@@ -1,7 +1,7 @@
-**CentOS 6/7 Base Minimal Install - Updated 11/28/2016**
+**CentOS 6/7 Base Minimal Install - Updated 03/24/2017**
 
 
-**CentOS 6.8 Base Minimal Install - 238 MB - Updated 11/28/2016**
+**CentOS 6.8 Base Minimal Install - 239 MB - Updated 03/24/2017**
 
 >**Built from centos:6.8**
 
@@ -14,7 +14,7 @@ http://www.appcontainers.com/centos6
 
 &nbsp;
 
-**CentOS 7 Base Minimal Install - 284 MB - Updated 11/28/2016**
+**CentOS 7.3 Base Minimal Install - 277 MB - Updated 03/24/2017**
 
 >**Built from centos:7**
 
