@@ -1,6 +1,6 @@
 ###########################################################
 # Dockerfile to build the CentOS 7 Base Container
-# Based on: centos:7.2.1511
+# Based on: centos:7.3
 # DATE: 06/11/16
 # COPYRIGHT: Appcontainers.com
 ###########################################################
@@ -58,7 +58,6 @@ sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.rep
 # Exclude systemd, and its dependant libs as centos installs a fake systemd for the container.
 yum clean all && \
 yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount* -y update && \
-yum -y install vim ansible && \
 
 # Remove yum cache this bad boy can be 150MBish
 yum clean all && \
@@ -81,13 +80,6 @@ VOLUME [ "/sys/fs/cgroup" ]
 #*******************  APPLICATION INSTALL  ************************
 ###################################################################
 
-# Install pip and configure ansible
-RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py" && \
-python /tmp/get-pip.py && \
-pip install pip --upgrade && \
-rm -fr /tmp/get-pip.py && \
-mkdir -p /etc/ansible/roles || exit 0 && \
-echo localhost ansible_connection=local > /etc/ansible/hosts
 
 ###################################################################
 #******************  POST DEPLOY CLEAN UP  ************************
