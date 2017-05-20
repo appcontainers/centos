@@ -1,23 +1,30 @@
-## CentOS 6.8 Base Minimal Install - 239 MB - Updated 03/25/2017 (tags: ansible, ansible-6)
+># CentOS 6.9 Ansible Base Minimal Install - 188 MB - Updated 05/19/2017 (ansible: ansible-6)
 
-***This container is built from centos:6.8, (402 MB Before Flatification)***
+***This container is built from [centos:6.9](https://hub.docker.com/_/centos/), (445 MB Before Flatification)***
 
-># Installation Steps:
+<br>
 
-### Install official CentOS 6 GPG Key
+## Installation Steps:
+-------
+
+#### Install official CentOS 6 GPG Key:
 
 ```bash
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 ```
 
-### Install the Epel Repository
+<br>
+
+#### Install the Epel Repository:
 
 ```bash
 yum install -y epel-release
 rpm --import http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
 ```
 
-### Install the Remi Repository
+<br>
+
+#### Install the Remi Repository:
 
 ```bash
 cd /etc/yum.repos.d/;
@@ -27,22 +34,28 @@ rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
 rm -fr *.rpm
 ```
 
-### Modify Remi Repo to enable remi base and PHP 5.5
+<br>
+
+#### Modify Remi Repo to enable remi base and PHP 7.1:
 
 ```bash
 sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo;
-sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo
+sed -ie '/\[remi-php71\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi-php71.repo
 ```
 
-### Update the OS and install required packages
+<br>
+
+#### Update the OS and install required packages:
 
 ```bash
 yum clean all;
 yum -y update;
-yum -y install vim ansible;
+yum -y install ansible;
 ```
 
-### Install and Configure Ansible
+<br>
+
+#### Install and Configure Ansible:
 
 ```bash
 curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py" && \
@@ -53,7 +66,9 @@ mkdir -p /etc/ansible/roles || exit 0 && \
 echo localhost ansible_connection=local > /etc/ansible/hosts
 ```
 
-### Cleanup
+<br>
+
+#### Cleanup:
 
 ***Remove the contents of /var/cache/ after a yum update or yum install will save about 150MB from the image size***
 
@@ -62,7 +77,9 @@ yum clean all
 rm -f /etc/yum.repos.d/*.rpm; rm -fr /var/cache/*
 ```
 
-### Cleanup Locales
+<br>
+
+#### Cleanup Locales:
 
 ```bash
 for x in `ls /usr/share/locale | grep -v -i en | grep -v -i local`;do rm -fr /usr/share/locale/$x; done && \
@@ -77,7 +94,9 @@ mv -f locale-archive locale-archive.tmpl;
 build-locale-archive
 ```
 
-### Set the default Timezone to EST
+<br>
+
+#### Set the default Timezone to EST:
 
 ```bash
 cp /etc/localtime /root/old.timezone && \
@@ -85,14 +104,18 @@ rm -f /etc/localtime && \
 ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
 ```
 
-### Remove Man Pages and Docs to preserve Space
+<br>
+
+#### Remove Man Pages and Docs to preserve Space:
 
 ```bash
 rm -fr /usr/share/doc/* /usr/share/man/* /usr/share/groff/* /usr/share/info/*;
 rm -rf /usr/share/lintian/* /usr/share/linda/* /var/cache/man/*
 ```
 
-### Set the Terminal CLI Prompt
+<br>
+
+#### Set the Terminal CLI Prompt:
 
 ***Copy the included Terminal CLI Color Scheme file to /etc/profile.d so that the terminal color will be included in all child images***
 
@@ -132,38 +155,44 @@ if [ "$PS1" ]; then
 fi
 ```
 
-### Prevent the .bashrc from being executed via SSH or SCP sessions
+<br>
+
+#### Prevent the .bashrc from being executed via SSH or SCP sessions:
 
 ```bash
 echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /root/.bashrc && \
 echo -e "\nif [[ -n \"\$SSH_CLIENT\" || -n \"\$SSH_TTY\" ]]; then\n\treturn;\nfi\n" >> /etc/skel/.bashrc
 ```
 
-### Set Dockerfile Runtime command
+<br>
+
+#### Set Dockerfile Runtime command:
 
 ***Default command to run when lauched via docker run***
 
 ```bash
 CMD /bin/bash
 ```
-&nbsp;
 
-># Building the image from the Dockerfile:
+<br>
+
+## Building the image from the Dockerfile:
+-------
 
 ```bash
 docker build -t build/centos .
 ```
-&nbsp;
 
-># Packaging the final image
+<br>
+
+## Packaging the final image:
+-------
 
 Because we want to make this image as light weight as possible in terms of size, the image is flattened in order to remove the docker build tree, removing any intermediary build containers from the image. In order to remove the reversion history, the image needs to be ran, and then exported/imported. Note that just saving the image will not remove the revision history, In order to remove the revision history, the running container must be exported and then re-imported.
 
-&nbsp;
+<br>
 
-># Flatten the Image
-
-***Run the build container***
+#### Run the container build:
 
 ```bash
 docker run -it -d \
@@ -176,36 +205,46 @@ build/centos \
 
 `CTL P` + `CTL Q`
 
+<br>
 
-***Export and Re-import the Container***
+#### Export and Re-import the Container:
 
 __Note that because we started the build container with the name of centos, we will use that in the export statement instead of the container ID.__
 
 ```bash
-docker export centos | docker import - appcontainers/centos:latest
+docker export centos | docker import - appcontainers/centos:ansible
 ```
 
-***Verify***
+<br>
+
+#### Verify:
 
 Issuing a `docker images` should now show a newly saved appcontainers/centos image, which can be pushed to the docker hub.
 
-***Run the container***
+<br>
+
+## Run the container:
+-------
 
 ```bash
-docker run -it -d appcontainers/centos
+docker run -it -d appcontainers/centos:ansible
 ```
 
-&nbsp;
+<br>
 
-># Dockerfile Change-log:
+## Dockerfile Change-log:
+-------
 
-    03/25/2017 - Created separate build/tags for raw base and base with ansible installed
-    11/28/2016 - Update to OS, add vim, and ansible as it will replace runconfig scripts
-    06/11/2016 - Update to 6.8
-    12/14/2015 - Update to 6.7 official, epel change.
-    09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
-    08/07/2015 - Upgrade to CentOS 6.7
-    07/07/2015 - Squueze more space.. reduced from 270MB to 137MB
-    05/06/2015 - Updated configuration scripts, pre import GPG repo keys
-    04/27/2015 - Removed Locales other than English to conserve over 100MB
-    04/06/2015 - Changed Postgres Repo from postgresql9.3 postgresql-9.4
+```buildlog
+05/19/2017 - Update to 6.9, PHP 7.1
+03/25/2017 - Created separate build/tags for raw base and base with ansible installed
+11/28/2016 - Update to OS, add vim, and ansible as it will replace runconfig scripts
+06/11/2016 - Update to 6.8
+12/14/2015 - Update to 6.7 official, epel change.
+09/29/2015 - Add Line to .bashrc to prevent additions to the basrc to be run from SSH/SCP login
+08/07/2015 - Upgrade to CentOS 6.7
+07/07/2015 - Squueze more space.. reduced from 270MB to 137MB
+05/06/2015 - Updated configuration scripts, pre import GPG repo keys
+04/27/2015 - Removed Locales other than English to conserve over 100MB
+04/06/2015 - Changed Postgres Repo from postgresql9.3 postgresql-9.4
+```

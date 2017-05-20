@@ -1,13 +1,13 @@
 ###########################################################
-# Dockerfile to build the CentOS 6.8 Base Container
-# Based on: library/centos:6.8
+# Dockerfile to build the CentOS 6.9 Base Container
+# Based on: library/centos:6.9
 # DATE: 11/25/16
 # COPYRIGHT: Appcontainers.com
 ###########################################################
 
 # Set the base image in namespace/repo format. 
 # To use repos that are not on the docker hub use the example.com/namespace/repo format.
-FROM library/centos:6.8
+FROM library/centos:6.9
 
 # File Author / Maintainer
 MAINTAINER Rich Nason rnason@appcontainers.com
@@ -50,12 +50,13 @@ rm -fr *.rpm && \
 
 #Enable the remi repo
 sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
-sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
+# sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
+sed -ie '/\[remi-php71\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi-php71.repo && \
 
 # Now that epel is installed, clean all again and update
 yum clean all && \
 yum -y update && \
-yum -y install vim ansible && \
+yum -y install ansible && \
 
 # Remove yum cache this bad boy can be 150MBish
 yum clean all && \

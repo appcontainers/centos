@@ -52,13 +52,14 @@ rm -fr *.rpm && \
 
 #Enable the remi repo
 sed -ie '/\[remi\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
-sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
+# sed -ie '/\[remi-php55\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi.repo && \
+sed -ie '/\[remi-php71\]/,/^\[/s/enabled=0/enabled=1/' /etc/yum.repos.d/remi-php71.repo && \
 
 # Update the OS,
 # Exclude systemd, and its dependant libs as centos installs a fake systemd for the container.
 yum clean all && \
 yum --exclude=systemd*,util-linux*,libblkid*,libuuid*,libmount* -y update && \
-yum -y install vim ansible && \
+yum -y install ansible && \
 
 # Remove yum cache this bad boy can be 150MBish
 yum clean all && \
